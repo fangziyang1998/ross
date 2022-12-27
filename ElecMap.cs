@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -30,28 +30,28 @@ namespace AGV_V1._0
         public Image img_Display = Resources.Display;
 
 
-        //电子地图的宽度
+        //Ширина электронной карты
         public int Width
         {
             get;
             set;
         }
 
-        //电子地图的长度
+        //Длина электронной карты
         public int Height
         {
             get;
             set;
         }
 
-        //电子地图的长被分割的个数
+        //Количество длинных делений электронной карты
         public int heightNum
         {
             get;
             set;
         }
 
-        //电子地图的宽被分割的个数
+        //Количество делений ширины электронной карты
         public int widthNum
         {
             get;
@@ -67,11 +67,11 @@ namespace AGV_V1._0
         
 
         /// <summary>
-        /// 构造函数，初始化电子地图的长度、宽度和每一个小块的基准长度
+        /// Конструктор, инициализируйте длину и ширину электронной карты и опорную длину каждого маленького блока
         /// </summary>
-        /// <param name="width">电子地图的宽度</param>
-        /// <param name="height">电子地图的长度</param>
-        /// <param name="benchmark">每一个小块的基准长度</param>
+        /// <param name="width">Ширина электронной карты</param>
+        /// <param name="height">Длина электронной карты</param>
+        /// <param name="benchmark">Базовая длина каждого маленького блока</param>
 
         public ElecMap(int height, int width )
         {
@@ -79,7 +79,7 @@ namespace AGV_V1._0
             this.Height = height;
         }
 
-        //无参构造函数
+        
         public ElecMap() { }
 
         public void Draw_Node(Graphics g)
@@ -104,43 +104,39 @@ namespace AGV_V1._0
         }
 
         /// <summary>
-        /// 映射函数  字符串->图片
+        
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
         public void  Map(string name,MapNode node)
         {
-            if (name == "道路")
+            if (name == "путь")
             {
                 node.oth = img_Road;
                 node.Node_Type = true;
             }
-            if (name == "障碍物")
+            if (name == "препятствие")
             {
                 node.oth = img_Obstacle;
                 node.Node_Type = false;
             }
-            if (name == "充电区")
+            if (name == "зона зарядки")
             {
                 node.oth = img_ChargeStation;
                 node.Node_Type = true;
             }
-            if (name == "传送带")
+            if (name == "Место сбора")
             {
                 node.oth = img_Belt;
                 node.Node_Type = true;
             }
-            if (name == "扫描仪")
-            {
-                node.oth = img_Scanner;
-                node.Node_Type = true;
-            }
-            if (name == "投送处")
+           
+            if (name == "место доставки")
             {
                 node.oth=img_Destination ;
                 node.Node_Type=false;
             }
-            if (name == "隔道")
+            if (name == "через дорогу")
             {
                 node.oth = img_Mid;
                 node.Node_Type = true;
@@ -148,7 +144,7 @@ namespace AGV_V1._0
         }
 
         /// <summary>
-        /// 初始化电子地图，将所有的object的属性赋值，同时把电子地图中的物体都摆放好
+        /// Инициализировать электронную карту, присвоить все атрибуты объекта и одновременно расположить объекты на электронной карте
         /// </summary>
         /// <param name="g"></param>
 
@@ -159,12 +155,12 @@ namespace AGV_V1._0
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(path);
 
-            //获取根节点
+            //Получить корневой узел
             XmlNode root = xmlDoc.SelectSingleNode("config");
 
-            int Node_number = 1;    //节点编号
+            int Node_number = 1;    
 
-            //电子地图的长、宽被分割的个数
+            //Количество разделенной длины и ширины электронной карты
             heightNum = Height / constDefine.BENCHMARK;
             widthNum = Width / constDefine.BENCHMARK;
 
@@ -172,14 +168,14 @@ namespace AGV_V1._0
             TempMapNode =new MapNode [heightNum,widthNum];  
             str=new String[heightNum,widthNum];
 
-            //循环变量
+           
             int i = 0;
             int j = 0;
 
-            //横纵坐标的控制变量
+            
             int point_x, point_y;
 
-            //节点类型
+           
             bool point_type = false;
 
             point_x = constDefine.BEGIN_X;
@@ -213,7 +209,7 @@ namespace AGV_V1._0
                     point_y += constDefine.BENCHMARK;
                 }
             
-            //读XML文件中存的地图
+            
             for (i = 0; i < heightNum; i++)
             {
                 point_x = constDefine.BLANK_X;
@@ -230,16 +226,16 @@ namespace AGV_V1._0
         }
 
         /// <summary>
-        /// 按比例缩放图片
+        
         /// </summary>
-        /// <param name="SourceImage"> 源图片</param>
-        /// <param name="TargetWidth">目标宽度</param>
-        /// <param name="TargetHeight">目标长度</param>
+        /// <param name="SourceImage"></param>
+        /// <param name="TargetWidth"></param>
+        /// <param name="TargetHeight"></param>
         /// <returns></returns>
         public Image ChargePicture(Image SourceImage, int TargetWidth, int TargetHeight)
         {
-            int IntWidth; //新的图片宽
-            int IntHeight; //新的图片高
+            int IntWidth; 
+            int IntHeight; 
             try
             {
                 System.Drawing.Imaging.ImageFormat format = SourceImage.RawFormat;
@@ -247,28 +243,28 @@ namespace AGV_V1._0
                 Graphics g = Graphics.FromImage(SaveImage);
                 g.Clear(Color.White);
 
-                //计算缩放图片的大小 
+                
 
-                if (SourceImage.Width > TargetWidth && SourceImage.Height <=TargetHeight)//宽度比目的图片宽度大，长度比目的图片长度小
+                if (SourceImage.Width > TargetWidth && SourceImage.Height <=TargetHeight)
                 {
                     IntWidth = TargetWidth;
                     IntHeight = (IntWidth * SourceImage.Height) / SourceImage.Width;
                 }
-                else if (SourceImage.Width <= TargetWidth && SourceImage.Height >TargetHeight)//宽度比目的图片宽度小，长度比目的图片长度大
+                else if (SourceImage.Width <= TargetWidth && SourceImage.Height >TargetHeight)
                 {
                     IntHeight = TargetHeight;
                     IntWidth = (IntHeight * SourceImage.Width) / SourceImage.Height;
                 }
-                else if (SourceImage.Width <= TargetWidth && SourceImage.Height <=TargetHeight) //长宽比目的图片长宽都小
+                else if (SourceImage.Width <= TargetWidth && SourceImage.Height <=TargetHeight) 
                 {
                     IntHeight = TargetWidth;
                     IntWidth = TargetHeight;
                 }
-                else//长宽比目的图片的长宽都大
+                else
                 {
                     IntWidth = TargetWidth;
                     IntHeight = (IntWidth * SourceImage.Height) / SourceImage.Width;
-                    if (IntHeight > TargetHeight)//重新计算
+                    if (IntHeight > TargetHeight)
                     {
                         IntHeight = TargetHeight;
                         IntWidth = (IntHeight * SourceImage.Width) / SourceImage.Height;
@@ -287,7 +283,7 @@ namespace AGV_V1._0
             return null;
         }
         /// <summary>
-        /// 析构函数
+        
         /// </summary>
         ~ElecMap()
         {
