@@ -1,4 +1,12 @@
-﻿namespace AGV_V1._0
+#include <stdio.h>
+#include <assert.h>
+#include <stdlib.h>
+#include <time.h>
+
+#include "ross.h"
+#include "model.h"
+    
+namespace AGV_V1._0
 {
     partial class Form1
     {
@@ -84,7 +92,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(37, 20);
             this.label1.TabIndex = 0;
-            this.label1.Text = "道路";
+            this.label1.Text = "путь";
             // 
             // label2
             // 
@@ -94,7 +102,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(37, 20);
             this.label2.TabIndex = 1;
-            this.label2.Text = "隔道";
+            this.label2.Text = "через дорогу";
             // 
             // label3
             // 
@@ -104,7 +112,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(51, 20);
             this.label3.TabIndex = 2;
-            this.label3.Text = "传送带";
+            this.label3.Text = "место сбора";
             // 
             // label4
             // 
@@ -114,7 +122,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(51, 20);
             this.label4.TabIndex = 3;
-            this.label4.Text = "投递处";
+            this.label4.Text = "офис доставки";
             // 
             // label5
             // 
@@ -124,7 +132,7 @@
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(51, 20);
             this.label5.TabIndex = 4;
-            this.label5.Text = "充电区";
+            this.label5.Text = "зона зарядки";
             // 
             // label6
             // 
@@ -134,18 +142,9 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(51, 20);
             this.label6.TabIndex = 5;
-            this.label6.Text = "障碍物";
+            this.label6.Text = "препятствие";
             this.label6.Click += new System.EventHandler(this.label6_Click);
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Microsoft YaHei", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label7.Location = new System.Drawing.Point(40, 512);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(51, 20);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "扫描仪";
+            //
             // 
             // timer1
             // 
@@ -265,7 +264,7 @@
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(75, 23);
             this.button4.TabIndex = 32;
-            this.button4.Text = "指定小车";
+            this.button4.Text = "назначенный автомобиль";
             this.button4.UseVisualStyleBackColor = false;
             this.button4.MouseLeave += new System.EventHandler(this.button4_MouseLeave);
             this.button4.MouseMove += new System.Windows.Forms.MouseEventHandler(this.button4_MouseMove);
@@ -278,7 +277,7 @@
             this.button12.Name = "button12";
             this.button12.Size = new System.Drawing.Size(75, 23);
             this.button12.TabIndex = 33;
-            this.button12.Text = "指定目的地";
+            this.button12.Text = "указанный пункт назначения";
             this.button12.UseVisualStyleBackColor = false;
             this.button12.MouseLeave += new System.EventHandler(this.button12_MouseLeave);
             this.button12.MouseMove += new System.Windows.Forms.MouseEventHandler(this.button12_MouseMove);
@@ -291,7 +290,7 @@
             this.button15.Name = "button15";
             this.button15.Size = new System.Drawing.Size(75, 23);
             this.button15.TabIndex = 34;
-            this.button15.Text = "开始";
+            this.button15.Text = "Начало";
             this.button15.UseVisualStyleBackColor = false;
             this.button15.MouseLeave += new System.EventHandler(this.button15_MouseLeave);
             this.button15.MouseMove += new System.Windows.Forms.MouseEventHandler(this.button15_MouseMove);
@@ -348,7 +347,7 @@
             this.PauseToolStripMenuItem.BackColor = System.Drawing.Color.Chartreuse;
             this.PauseToolStripMenuItem.Name = "PauseToolStripMenuItem";
             this.PauseToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
-            this.PauseToolStripMenuItem.Text = "停止";
+            this.PauseToolStripMenuItem.Text = "останавливаться";
             this.PauseToolStripMenuItem.Click += new System.EventHandler(this.PauseToolStripMenuItem_Click);
             // 
             // toolStripMenuItem4
@@ -365,21 +364,7 @@
             this.reduceToolStripMenuItem});
             this.operateToolStripMenuItem.Name = "operateToolStripMenuItem";
             this.operateToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
-            this.operateToolStripMenuItem.Text = "操作";
-            // 
-            // enlargeToolStripMenuItem
-            // 
-            this.enlargeToolStripMenuItem.Name = "enlargeToolStripMenuItem";
-            this.enlargeToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
-            this.enlargeToolStripMenuItem.Text = "放大";
-            this.enlargeToolStripMenuItem.Click += new System.EventHandler(this.enlargeToolStripMenuItem_Click);
-            // 
-            // reduceToolStripMenuItem
-            // 
-            this.reduceToolStripMenuItem.Name = "reduceToolStripMenuItem";
-            this.reduceToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
-            this.reduceToolStripMenuItem.Text = "缩小";
-            this.reduceToolStripMenuItem.Click += new System.EventHandler(this.reduceToolStripMenuItem_Click);
+            this.operateToolStripMenuItem.Text = "действовать";
             // 
             // toolStripMenuItem5
             // 
@@ -392,7 +377,7 @@
             this.ShowVehicleRouteToolStripMenuItem.BackColor = System.Drawing.Color.White;
             this.ShowVehicleRouteToolStripMenuItem.Name = "ShowVehicleRouteToolStripMenuItem";
             this.ShowVehicleRouteToolStripMenuItem.Size = new System.Drawing.Size(92, 21);
-            this.ShowVehicleRouteToolStripMenuItem.Text = "显示小车轨迹";
+            this.ShowVehicleRouteToolStripMenuItem.Text = "Покажи трек машины";
             this.ShowVehicleRouteToolStripMenuItem.Click += new System.EventHandler(this.ShowVehicleRouteToolStripMenuItem_Click);
             // 
             // toolStripMenuItem6
@@ -401,23 +386,7 @@
             this.toolStripMenuItem6.Size = new System.Drawing.Size(24, 21);
             this.toolStripMenuItem6.Text = " ";
             // 
-            // setToolStripMenuItem
-            // 
-            this.setToolStripMenuItem.BackColor = System.Drawing.Color.White;
-            this.setToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.setHWToolStripMenuItem});
-            this.setToolStripMenuItem.Name = "setToolStripMenuItem";
-            this.setToolStripMenuItem.Size = new System.Drawing.Size(44, 21);
-            this.setToolStripMenuItem.Text = "设置";
-            // 
-            // setHWToolStripMenuItem
-            // 
-            this.setHWToolStripMenuItem.Name = "setHWToolStripMenuItem";
-            this.setHWToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
-            this.setHWToolStripMenuItem.Text = "设置长宽";
-            this.setHWToolStripMenuItem.Click += new System.EventHandler(this.setHWToolStripMenuItem_Click);
-            // 
-            // toolTip1
+            // setToolStripMenuItem7
             // 
             this.toolTip1.ShowAlways = true;
             // 
@@ -439,7 +408,7 @@
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(37, 20);
             this.label8.TabIndex = 37;
-            this.label8.Text = "空白";
+            this.label8.Text = "пустой";
             // 
             // button2
             // 
@@ -459,7 +428,7 @@
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(57, 17);
             this.label9.TabIndex = 39;
-            this.label9.Text = "AGV小车";
+            this.label9.Text = "автомобиль";
             // 
             // Form1
             // 
@@ -495,7 +464,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "AGV系统";
+            this.Text = "система";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             this.panel1.ResumeLayout(false);
@@ -518,6 +487,9 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Timer timer1;
         //private System.Windows.Forms.Button button4;
+        
+        
+        
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.PictureBox pic;
