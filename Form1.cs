@@ -1,4 +1,10 @@
-﻿using System;
+#include <stdio.h>
+#include <assert.h>
+#include <stdlib.h>
+#include <time.h>
+#include "ross.h"
+#include "model.h"
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -30,103 +36,99 @@ namespace AGV_V1._0
             InitialGame();
         }
 
-////////////////////////////////////////////变量定义///////////////////////////////////////////
+////////////////////////////////////////////Определения переменных///////////////////////////////////////////
 
-        public Image img_Belt;                    //传送带
-        public Image img_Mid;                     //中间隔带
-        public Image img_Road;                    //道路
-        public Image img_Destination;             //投送处
-        public Image img_ChargeStation;           //充电区
-        public Image img_Obstacle;                //障碍物
-        public Image img_Scanner;                 //扫描仪
-        public Image img_Icon;                    //图标
-        public Image img_Alter;                   //替换
-        public Image img_White;                   //白色图片，当某个节点图图片为空时，显示与北京背景相同颜色的白色
-        public Image img_Png;                     //透明图片，当用户想要使某个节点消失时，点击设置
-        public Image img_Flag;                    //点中目的地插小旗
-        public Image img_Display;                //被选中为目的地时的状态
-        public Image img_Orange;                //被选中为目的地时的状态
+        public Image img_Belt;                    //Место сбора
+        public Image img_Road;                    //путь
+        public Image img_Destination;             //место доставки
+        public Image img_ChargeStation;           //зона зарядки
+        public Image img_Obstacle;                //препятствие
+        public Image img_Icon;                    //икона
+        public Image img_Alter;                   //заменять
+        public Image img_White;                   //Белое изображение, когда изображение графа узлов пустое, оно будет отображаться белым цветом того же цвета, что и фон .
+        public Image img_Display;                //Статус при выборе в качестве пункта назначения
+        public Image img_Orange;                //Статус при выборе в качестве пункта назначения
         public Image img_Yellow;
 
-        //新建两个全局对象  小车、电子地图
+        //Создайте два новых глобальных объекта: автомобиль и электронную карту.
         Vehicle[] vehicle;
 
         static ElecMap Elc;
 
-        //要替换图片的名字
+        //Название картинки для замены
         String PicString;
 
-        //点击图片放置的图片和类型
+        //Нажмите на изображение, чтобы разместить изображение и введите
         Image SetImage;
         bool SetType;
 
-        //小车是否可以启动的标志位,true 可以启动
+        //Может ли машина запустить бит флага, правда может начаться
         bool Vehicle_Start;
 
-        //是否可以更改物体的标志位，true 可以更改
+        //Можно ли изменить флаг объекта, true можно изменить
         bool Object_Change;
 
-        //目的地按钮的标志位，true 
+        //Бит флага кнопки назначения, true 
         bool Destination_Get;
 
-        //AGV小车按钮的标志位
+        //Флажковое положение кнопки тележки АГВ
         bool Vehicle_Get;
 
-        //AGV小车添加按钮
+        //Кнопка добавления тележки AGV
         bool AGV_Add;
 
-        //控制当系统停止运行的时候防止控制点击小车和目的地的开始按钮工作
+        //Элемент управления предотвращает нажатие кнопки запуска автомобиля и назначение работы, когда система остановлена.
         bool CanStart;
 
-        //小车和目的地是否配套，防止只有目的地而没有小车或者只有小车而没有目的地
+        //Совпадают ли автомобиль и пункт назначения, чтобы предотвратить только пункт назначения, но не автомобиль, или только автомобиль, но не пункт назначения.
         bool Des;
         bool Veh;
 
-        //用来记录点击的目的地的坐标和点击的小车的下标
+        //Используется для записи координат пункта назначения, на который нажали, и индекса автомобиля, на который нажали.
         static int Set_Destination_X;
         static int Set_Destination_Y;
         static int Vehicle_Index;
 
-        Stack<float> Picture_Length;   //堆栈->存放大缩小的图片
-        Stack<int> Panel_Width;       //堆栈->用来存panel的宽度
-        Stack<int> Panel_Height;      //堆栈->用来存panel的长度
+        Stack<float> Picture_Length;   //Стек -> хранить большие и маленькие картинки
+        Stack<int> Panel_Width;       
+        Stack<int> Panel_Height;      
 
-        //控制缩放比例的变量
+        
         float small_number;
 
-        //用来存panel的宽度和长度
+        
         int iWidth, iHeight;
 
         private Bitmap surface;
         private Graphics g;
 
-        //初始化点击设置长宽按钮弹出的  窗体
+        
         Form F_HegWethBech;
 
-        //点击显示小车路径时弹出的文本框
+        
         Form F_VehicleRoute;
         Label L_VehicleRoute;
 
-//////////////////////////////设置按钮下的变量///////////////////////////////////
+//////////////////////////////Установите переменную под кнопкой///////////////////////////////////
 
-        Panel P_TopPanel;      //最上面的选择条
-        Panel P_HWForm; //下面的设置框体长宽的panel
-        Panel P_HWMap;  //下面的设置地图长款的panel
+        Panel P_TopPanel;     
+        Panel P_HWForm; 
+        Panel P_HWMap;  
         Panel P_BottomPanel;
 
-        Button B_HWForm;    //框体的长宽按钮
-        Button B_HWMap;     //地图长宽按钮
-        Button B_OKBotton;  //最底部的确认按钮，设置框体长宽和地图长宽后的确认
-        Button B_CANCELBotton; //最底部的取消按钮，设置框体长宽和地图长宽后的取消
+        Button B_HWForm;    //Кнопки высоты и ширины рамки
+        Button B_HWMap;     //Кнопки длины и ширины карты
+        Button B_OKBotton;  //Кнопка подтверждения внизу, подтвердите после установки длины и ширины рамки и длины и ширины карты
+        Button B_CANCELBotton; //Кнопка отмены внизу, отмена после установки длины и ширины рамки и длины и ширины карты
 
-        //初始化窗体上的长度、宽度、基准的输入框
+        //Инициализировать поля ввода длины, ширины и ссылки в форме.
         TextBox T_HegForm;
         TextBox T_WethForm;
         TextBox T_Bech;
         TextBox T_HegMap;
         TextBox T_WethMap;
 
-        //初始化输入框左侧的标签
+        //Инициализировать метку в левой части поля ввода
         Label L_HegForm;
         Label L_WethForm;
         Label L_Bech;
@@ -134,37 +136,35 @@ namespace AGV_V1._0
         Label L_WethMap;
 
 
-///////////////////////////////////////////////变量定义完毕//////////////////////////////////////////////
+///////////////////////////////////////////////Переменная определена//////////////////////////////////////////////
 
 
         /// <summary>
-        /// 初始化游戏
         /// </summary>
         private void InitialGame()
         {
-            InitVariable();    //初始化变量
-            InitialXml();      //初始化XML配置文件
-            InitialElc();      //初始化电子地图
-            InitialVehicle();   //初始化AGV小车
-            InitStack();       //初始化堆栈
+            InitVariable();    //Инициализировать переменные
+            InitialElc();      //Инициализировать электронную карту
+            InitialVehicle();   //Инициализировать автомобиль
+            InitStack();       //Инициализировать стек
         }
 
         /// <summary>
-        /// 初始化变量
+       
         /// </summary>
         public void InitVariable()
         {
-            img_Belt = Resources.Belt;                    //传送带
-            img_Mid = Resources.Mid;                      //中间隔带
-            img_Road = Resources.Road;                    //道路
-            img_Destination = Resources.Destination;      //投送处
-            img_ChargeStation = Resources.ChargeStation;  //充电区
-            img_Obstacle = Resources.Obstacle;            //障碍物
-            img_Scanner = Resources.Scanner;              //扫描仪
-            img_Alter = Resources.Alter;                  //替换
-            img_Png = Resources.Png;                      //透明按钮
-            img_White = Resources.White;                  //白色图片
-            img_Flag = Resources.Flag;                    //小旗
+            img_Belt = Resources.Belt;                    
+            img_Mid = Resources.Mid;                      
+            img_Road = Resources.Road;                    
+            img_Destination = Resources.Destination;      
+            img_ChargeStation = Resources.ChargeStation;  
+            img_Obstacle = Resources.Obstacle;            
+            img_Scanner = Resources.Scanner;              
+            img_Alter = Resources.Alter;                  
+            img_Png = Resources.Png;                      
+            img_White = Resources.White;                 
+            img_Flag = Resources.Flag;                    
             img_Display = Resources.Display;
             img_Orange = Resources.Vehicle_Orange;
             img_Yellow = Resources.Vehicle_Yellow;
@@ -221,36 +221,36 @@ namespace AGV_V1._0
         }
 
         /// <summary>
-        /// 初始化XML配置文件
+        
         /// </summary>
         public void InitialXml()
         {
-            //配置文件的路径，此相对路径是相对于.exe文件的路径
+            
             string path = "../../XMLFile1.xml";
 
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(path);
 
-            //获取根节点
+            
             XmlNode root = xmlDoc.SelectSingleNode("config");
 
-            //获取关键字是"WIDTH"的节点的值，并将其转化成int类型
+            
             XmlNode xn = root.SelectSingleNode("WIDTH");
             constDefine.WIDTH = Convert.ToInt32(xn.InnerText);
 
-            //获取关键字是"HEIGHT"的节点的值，并将其转化成int类型
+           
             xn = root.SelectSingleNode("HEIGHT");
             constDefine.HEIGHT = Convert.ToInt32(xn.InnerText);
 
-            //获取关键字是"VEHICL_COUNT"的节点的值，并将其转化成int类型
+           
             xn = root.SelectSingleNode("VEHICL_COUNT");
             constDefine.VEHICL_COUNT = Convert.ToInt32(xn.InnerText);
 
-            //获取关键字是"Form_Height"的节点的值，并将其转化成int类型
+            
             xn = root.SelectSingleNode("Form_Height");
             constDefine.Form_Height = Convert.ToInt32(xn.InnerText);
 
-            //获取关键字是"Form_Width"的节点的值，并将其转化成int类型
+           
             xn = root.SelectSingleNode("Form_Width");
             constDefine.Form_Width = Convert.ToInt32(xn.InnerText);
 
@@ -267,29 +267,29 @@ namespace AGV_V1._0
             Elc.mapnode = new MapNode[Elc.heightNum, Elc.widthNum];
             Elc.TempMapNode = new MapNode[Elc.heightNum, Elc.widthNum];
 
-            //设置滚动条滚动的区域
+            //Установите область прокрутки полосы прокрутки
             this.AutoScrollMinSize = new Size(constDefine.WIDTH + constDefine.BEGIN_X, constDefine.HEIGHT);
 
-            //初始化地图位置            
-            Elc.SetObject();    //初始化电子地图，同时把电子地图中的物体都摆放好
+            //Инициализировать положение карты            
+            Elc.SetObject();    //Инициализировать электронную карту и одновременно расположить объекты на электронной карте
 
-            //设置pictureBox的尺寸和位置
+            //Установите размер и положение pictureBox
             pic.Location = Point.Empty;
             pic.ClientSize = new System.Drawing.Size(constDefine.WIDTH, constDefine.HEIGHT);
             surface = new Bitmap(constDefine.WIDTH, constDefine.HEIGHT);
             g = Graphics.FromImage(surface);
 
-            //给点击图片放置的图片和类型赋值，每点击图片默认赋值道路图片
+            //Назначьте значение изображению и введите текст, размещенный на изображении, по которому щелкнули, каждому изображению, по которому щелкнули, по умолчанию назначается изображение дороги.
             SetImage = img_Road;
             SetType = true;
 
-            //设置panel的尺寸
+            
             panel1.ClientSize = new System.Drawing.Size(constDefine.WIDTH, constDefine.HEIGHT);
             panel2.ClientSize = new System.Drawing.Size(constDefine.PANEL_X, constDefine.HEIGHTPANEL2);
 
             Add_Panel2();
 
-            //将pictureBox加入到panel上
+            
             pic.Image = surface;
             panel1.Controls.Add(pic);
 
@@ -297,38 +297,38 @@ namespace AGV_V1._0
         }
 
         /// <summary>
-        /// 初始化小车
+        ///Инициализировать автомобиль
         /// </summary>
         public void InitialVehicle()
         {
-           //初始化小车位置
+           //Инициализировать положение автомобиля
             vehicle = new Vehicle[1000];
 
-            //AGV小车的起始坐标
+            //Начальные координаты автомобиля
             int startX;
             int startY;
 
-            //AGV小车横纵坐标在XML文件中的关键字
+            
             string Str_H;
             string Str_Z;
 
             for (int i = 0; i < constDefine.VEHICL_COUNT; i++)
             {
                
-                //配置文件的路径，此相对路径是相对于.exe文件的路径
+                
                 string path = "../../XMLFile1.xml";
 
                 XmlDocument xmlDoc = new XmlDocument();
                 xmlDoc.Load(path);
 
-                //获取根节点
+               
                 XmlNode root = xmlDoc.SelectSingleNode("config");
 
                 Str_Z = "agv" + (i+1).ToString() + "-Z";
 
                 Str_H = "agv" + (i+1).ToString() + "-H";
 
-                //获取关键字是"WIDTH"的节点的值，并将其转化成int类型
+                
                 XmlNode xn = root.SelectSingleNode(Str_H);
                 startY = Convert.ToInt32(xn.InnerText);
 
@@ -348,37 +348,37 @@ namespace AGV_V1._0
                 vehicle[i].endX = vehicle[i].startX;
                 vehicle[i].endY = vehicle[i].startY;
             }
-            //把小车所在的节点设为占用状态
+            //Установите узел, в котором находится автомобиль, в состояние «занято».
             VehicleOcuppyNode();
 
-            //搜索路径 
+            //путь поиска
             for (int i = 0; i < constDefine.VEHICL_COUNT; i++)
             {
                 vehicle[i].SearchRoute(Elc, vehicle[i].startX, vehicle[i].startY, vehicle[i].endX, vehicle[i].endY);
             }
 
-            //检测冲突的节点，重新规划路线
+            //Обнаружение конфликтующих узлов и перенаправление
             CheckeConflictNode();
         }
 
         /// <summary>
-        /// 初始化堆栈，用来储存放大缩小的各值
+        /// Инициализировать стек для хранения значений увеличения и уменьшения масштаба
         /// </summary>
         public void InitStack()
         {
-            small_number = 1;                       //缩放比例的初始值
-            Picture_Length = new Stack<float>();    //每一个节点图片的堆栈初始化
-            Panel_Width = new Stack<int>();         //panel宽度的堆栈初始化
-            Panel_Height = new Stack<int>();        //panel高度的堆栈初始化
+            small_number = 1;                       
+            Picture_Length = new Stack<float>();    //Инициализация стека каждого изображения узла
+            Panel_Width = new Stack<int>();         
+            Panel_Height = new Stack<int>();        
             Picture_Length.Push(small_number);
-            iWidth = constDefine.WIDTH;             //panel宽度的控制变量
-            iHeight = constDefine.HEIGHT;           //panel高度的控制变量
+            iWidth = constDefine.WIDTH;             
+            iHeight = constDefine.HEIGHT;           
             Panel_Width.Push(iWidth);
             Panel_Height.Push(iHeight);
         }
 
         /// <summary>
-        /// 窗体重绘时执行的操作
+       
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -389,7 +389,7 @@ namespace AGV_V1._0
         }
 
         /// <summary>
-        /// 定时器
+        /// таймер
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -408,18 +408,18 @@ namespace AGV_V1._0
                    
                 }
             }
-            //对窗体进行更新
+            
             this.Refresh();
         }
 
         /// <summary>
-        /// 绘制电子地图
+        ///Нарисовать электронную карту
         /// </summary>
         /// <param name="e"></param>
         public void Draw(Graphics g)
         {
             // Graphics g = e.Graphics;
-            //绘制地图            
+            //нарисовать карту            
             for (int i = 0; i < Elc.heightNum; i++)
             {
                 for (int j = 0; j < Elc.widthNum; j++)
@@ -432,7 +432,7 @@ namespace AGV_V1._0
                 }
             }
            
-            //绘制小车
+            //нарисовать машину
             int count = Elc.heightNum;
             if (Elc.heightNum > constDefine.VEHICL_COUNT)
             {
@@ -450,16 +450,16 @@ namespace AGV_V1._0
         }
 
         /// <summary>
-        /// 给panel2上面加入按钮图例等
+        /// Легенда кнопки «Присоединиться» и т. д.
         /// </summary>
         public void Add_Panel2()
         {
-            //指定目的地、指定小车、开始按钮
+            //Указанный пункт назначения, указанный автомобиль, кнопка запуска
             panel2.Controls.Add(button4);
             panel2.Controls.Add(button12);
             panel2.Controls.Add(button15);
 
-            //将图例按钮加入到panel2中
+            //Добавьте кнопку легенды на панель2
             panel2.Controls.Add(button5);
             panel2.Controls.Add(button6);
             panel2.Controls.Add(button7);
@@ -471,7 +471,7 @@ namespace AGV_V1._0
             panel2.Controls.Add(button2);
 
 
-            //将左侧的label加入到左侧的panel2中
+            
             panel2.Controls.Add(label1);
             panel2.Controls.Add(label2);
             panel2.Controls.Add(label3);
@@ -484,7 +484,7 @@ namespace AGV_V1._0
         }
 
         /// <summary>
-        /// 把小车所在的节点设为占用状态
+        /// Установите узел, в котором находится автомобиль, в состояние «занято».
         /// </summary>
         public void VehicleOcuppyNode()
         {
@@ -516,11 +516,11 @@ namespace AGV_V1._0
 
         }
         /// <summary>
-        /// //检测冲突的节点，重新规划路线
+        /// //Обнаружение конфликтующих узлов и перенаправление
         /// </summary>
         public void CheckeConflictNode()
         {
-            //根据cost把小车从小到大排序
+            //Сортируйте автомобили от мала до велика по стоимости
             SortRoute();
             VehicleOcuppyNode();
             int count = constDefine.VEHICL_COUNT;
@@ -588,7 +588,7 @@ namespace AGV_V1._0
             }
         }
         /// <summary>
-        /// //根据cost把小车从大到小排序
+        /// //Сортируйте автомобили от мала до велика по стоимости
         /// </summary>
         public void SortRoute()
         {
@@ -612,7 +612,7 @@ namespace AGV_V1._0
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            //让控件不闪烁
+            
             this.SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.ResizeRedraw | ControlStyles.AllPaintingInWmPaint, true);
 
 
@@ -675,7 +675,7 @@ namespace AGV_V1._0
         }
 
         /// <summary>
-        /// 启动按钮触发的操作
+        /// Действие, вызванное кнопкой запуска
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -689,7 +689,7 @@ namespace AGV_V1._0
         }
 
         /// <summary>
-        /// 停止按钮触发的操作
+        /// Действие, вызванное кнопкой остановки
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -702,17 +702,15 @@ namespace AGV_V1._0
             CanStart = false;
         }
         /// <summary>
-        /// 放大键触发的函数
-        /// Stack没有获取栈顶元素的函数，所以先弹出栈顶元素，然后弹出第二个元素并获取，然后将第二个元素压入栈
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void enlargeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //缩放比 
+            
             small_number = small_number * 0.95f;
 
-            //每次放大时将缩放比压入栈
+            
             Picture_Length.Push(small_number);
 
             iWidth = (int)(iWidth / 0.95) + 1;
@@ -724,13 +722,13 @@ namespace AGV_V1._0
 
             pic.Image = GetSmall(surface, small_number);
 
-            //根据缩放比改变panel和pictureBox的大小
+           
             this.panel1.Size = new System.Drawing.Size(iWidth, iHeight);
             this.pic.Size = new System.Drawing.Size(iWidth, iHeight);
         }
 
         /// <summary>
-        /// 缩小键触发的函数
+       
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -739,7 +737,7 @@ namespace AGV_V1._0
             if (Picture_Length.Count > 1)
             {
 
-                //每次缩小时将缩放比弹出
+                
                 Picture_Length.Pop();
                 small_number = Picture_Length.Pop();
 
@@ -755,23 +753,23 @@ namespace AGV_V1._0
                 Panel_Height.Push(iHeight);
 
 
-                //根据缩放比改变panel和pictureBox的大小
+                
                 this.panel1.Size = new System.Drawing.Size(iWidth, iHeight);
                 this.pic.Size = new System.Drawing.Size(iWidth, iHeight);
             }
         }
 
         /// <summary>
-        /// 获取改变后的图片，放大缩小功能使用
+        
         /// </summary>
-        /// <param name="bm">要缩小的图片</param>
-        /// <param name="times">要缩小的倍数</param>
+        /// <param name="bm"></param>
+        /// <param name="times"></param>
         /// <returns></returns>
         private Bitmap GetSmall(Bitmap bm, double times)
         {
             int nowWidth = (int)(bm.Width / times);
             int nowHeight = (int)(bm.Height / times);
-            Bitmap newbm = new Bitmap(nowWidth, nowHeight);//新建一个放大后大小的图片
+            Bitmap newbm = new Bitmap(nowWidth, nowHeight);
 
             if (times >= 1 && times <= 1.1)
             {
@@ -799,7 +797,6 @@ namespace AGV_V1._0
         }
 
         /// <summary>
-        /// panel1重绘时执行的函数，右边的panel
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -809,7 +806,6 @@ namespace AGV_V1._0
         }
 
         /// <summary>
-        /// panel2重绘时执行的函数，左边的panel
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -819,7 +815,7 @@ namespace AGV_V1._0
         }
 
         /// <summary>
-        /// 点击右边的pictureBox触发的函数
+        
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -827,7 +823,7 @@ namespace AGV_V1._0
         {
             Point point = e.Location;
 
-            //测试点击点的坐标
+            //Проверить координаты точки щелчка
             string X = point.X.ToString();
             //string Y = point.Y.ToString();
             //MessageBox.Show(point.ToString(), X + Y);
@@ -835,7 +831,7 @@ namespace AGV_V1._0
 
             string tempstring;
 
-            //获得鼠标点击的位置的下标，并且改变原图中的物体类型
+            //Получите индекс положения щелчка мыши и измените тип объекта в исходном изображении.
             WidthNum = point.X / constDefine.BENCHMARK;
             HeightNum = point.Y / constDefine.BENCHMARK;
             if (Object_Change == true)
@@ -843,7 +839,7 @@ namespace AGV_V1._0
                 string path = "../../XMLFile1.xml";
                 XmlDocument xmlDoc = new XmlDocument();
                 xmlDoc.Load(path);
-                XmlNode root = xmlDoc.SelectSingleNode("config");//查找要修改的节点
+                XmlNode root = xmlDoc.SelectSingleNode("config");//Найдите узел для изменения
 
                 tempstring = "data";
                 tempstring = tempstring + (HeightNum + 1).ToString() + "-" + (WidthNum + 1).ToString();
@@ -851,9 +847,9 @@ namespace AGV_V1._0
                 XmlNode xn = root.SelectSingleNode(tempstring);
                 if(xn==null)
                 {
-                    XmlElement xe = xmlDoc.CreateElement(tempstring);//创建一个节点   
+                    XmlElement xe = xmlDoc.CreateElement(tempstring);//создать узел
                     xe.InnerText = PicString;
-                    root.AppendChild(xe);//添加到<bookstore>节点中   
+                    root.AppendChild(xe);  
                     xmlDoc.Save("../../XMLFile1.xml");
 
                     Elc.TempMapNode[HeightNum, WidthNum].oth = SetImage;
@@ -874,7 +870,7 @@ namespace AGV_V1._0
                 }   
             }
 
-            //查找点击的是哪一个小车
+            //Узнайте, какой автомобиль был нажат
             if (Vehicle_Get == true)
             {   
                 int i;
@@ -894,7 +890,7 @@ namespace AGV_V1._0
                 Vehicle_Get = false;
             }
 
-            //将点击的目的地的坐标记录下来
+            //Запишите координаты пункта назначения, на который нажали.
             if (Destination_Get == true&&CanStart==true)
             {
                 vehicle[Vehicle_Index].V_Picture = img_Yellow;
@@ -902,7 +898,7 @@ namespace AGV_V1._0
                 Set_Destination_Y = HeightNum;
 
                 if (Elc.TempMapNode[HeightNum, WidthNum].Node_Type == false)
-                    MessageBox.Show("点击的目的地不可达", "警告！！！");
+                    MessageBox.Show("Выбранный пункт назначения недоступен», «Внимание! ! !");
 
                 else
                 {
@@ -936,13 +932,13 @@ namespace AGV_V1._0
                 Destination_Get = false;           
             } 
 
-            //如果点击了AGV小车按钮
+            //Если нажать кнопку корзины
             if (AGV_Add == true)
             {
                 string path = "../../XMLFile1.xml";
                 XmlDocument xmlDoc = new XmlDocument();
                 xmlDoc.Load(path);
-                XmlNode root = xmlDoc.SelectSingleNode("config");//查找要修改的节点
+                XmlNode root = xmlDoc.SelectSingleNode("config");//Найдите узел для изменения
 
                 string Str_H;
                 string Str_Z;
@@ -952,13 +948,13 @@ namespace AGV_V1._0
                 Str_H = "agv" + (constDefine.VEHICL_COUNT).ToString() + "-H";
                 Str_Z = "agv" + (constDefine.VEHICL_COUNT).ToString() + "-Z";
 
-                XmlElement xe = xmlDoc.CreateElement(Str_H);//创建一个节点   
+                XmlElement xe = xmlDoc.CreateElement(Str_H);//создать узел   
                 xe.InnerText = WidthNum.ToString();
-                root.AppendChild(xe);//添加到节点中   
+                root.AppendChild(xe);//добавлено в узел 
 
-                xe = xmlDoc.CreateElement(Str_Z);//创建一个节点   
+                xe = xmlDoc.CreateElement(Str_Z);//создать узел  
                 xe.InnerText = HeightNum.ToString();
-                root.AppendChild(xe);//添加到节点中   
+                root.AppendChild(xe);//добавлено в узел   
 
                 string s = Convert.ToString(constDefine.VEHICL_COUNT);
                 XmlNode xn = root.SelectSingleNode("VEHICL_COUNT");
@@ -979,52 +975,52 @@ namespace AGV_V1._0
                 Elc.mapnode[HeightNum, WidthNum].nodeCanUsed = false;
                 Elc.TempMapNode[HeightNum, WidthNum].nodeCanUsed = false;
 
-                //把小车所在的节点设为占用状态
+                //Установите узел, в котором находится автомобиль, в состояние «занято».
                 VehicleOcuppyNode();
 
                 vehicle[constDefine.VEHICL_COUNT - 1].SearchRoute(Elc, vehicle[constDefine.VEHICL_COUNT - 1].startX, vehicle[constDefine.VEHICL_COUNT - 1].startY, vehicle[constDefine.VEHICL_COUNT - 1].endX, vehicle[constDefine.VEHICL_COUNT - 1].endY);
 
-                //检测冲突的节点，重新规划路线
+                //Обнаружение конфликтующих узлов и перенаправление
                 CheckeConflictNode();
             }
         }
 
         /// <summary>
-        /// 点击小车按钮
+       
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void button4_Click_1(object sender, EventArgs e)
         {
-            //当点击小车按钮时，目的地按钮和替换物体按钮失效
-            Object_Change = false;  //Unable更改物体
-            Destination_Get = false; //Unable点击目的地
-            Vehicle_Get = true;    //Enable点击AGV小车
+            //При нажатии кнопки автомобиля кнопка назначения и кнопка замены объекта отключаются.
+            Object_Change = false;  
+            Destination_Get = false; 
+            Vehicle_Get = true;    
             AGV_Add = false;
         }
 
         /// <summary>
-        /// 点击目的地按钮
+       
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void button12_Click(object sender, EventArgs e)
         {
-            //当点击目的地按钮时，小车按钮和替换物体按钮失效
+            
             Vehicle_Get = false;
-            Object_Change = false;  //Unable更改物体
-            Destination_Get = true; //Enable点击目的地
+            Object_Change = false;  
+            Destination_Get = true;
             AGV_Add = false;
         }
 
         ///// <summary>
-        ///// 命令小车全部移动按钮
+        ///// Прикажите машине переместить все кнопки
         ///// </summary>
         ///// <param name="sender"></param>
         ///// <param name="e"></param>
         //private void button15_Click(object sender, EventArgs e)
         //{
-        //    //如果系统启动按钮打开
+        //    
         //    if (CanStart == true)
         //    {
         //        VehicleOcuppyNode();
@@ -1034,10 +1030,10 @@ namespace AGV_V1._0
         //            vehicle[i].SearchRoute(Elc, vehicle[i].startX, vehicle[i].startY, vehicle[i].endX, vehicle[i].endY);
         //        }
 
-        //        //检测冲突的节点，重新规划路线
+        //        //Обнаружение конфликтующих узлов и перенаправление
         //        CheckeConflictNode();
 
-        //                //小车到达目的地都，原来的目的地坐标即现在的起始坐标
+        //                //Когда автомобиль прибывает в пункт назначения, исходные координаты пункта назначения являются текущими начальными координатами.
         //                for (int i = 0; i < vehicle.Length; i++)
         //                {
         //                    if (vehicle[i].Arrive==true)
@@ -1049,121 +1045,99 @@ namespace AGV_V1._0
         //    }
             
         //}
-        //点击AGV小车按钮，向地图中添加AGV小车
+        //Нажмите кнопку корзины, чтобы добавить корзину на карту.
         private void button2_Click(object sender, EventArgs e)
         {
             AGV_Add = true;
-            //当点击目的地按钮时，小车按钮和替换物体按钮失效
+            
             Vehicle_Get = false;
-            Object_Change = false;  //Unable更改物体
-            Destination_Get = false; //Unable点击目的地
+            Object_Change = false;  
+            Destination_Get = false; 
         }
 
-        //点击道路图片，改变图片和节点可达性
+        //Нажмите на изображение дороги, чтобы изменить изображение и доступность узла.
         private void button5_Click(object sender, EventArgs e)
         {
-            //当点击替换的物体图片的按钮时，目的地按钮和小车按钮失效
+            
             Vehicle_Get = false;
             Destination_Get = false;
-            Object_Change = true;  //Enable更改物体
+            Object_Change = true; 
             SetImage = img_Road;
             SetType = true;
-            PicString = "道路";
+            PicString = "путь";
             AGV_Add = false;
         }
 
-        //点击投递处按钮，改变图片和节点可达性
+        //Нажмите кнопку доставки, чтобы изменить изображение и доступность узла.
         private void button8_Click(object sender, EventArgs e)
         {
-            //当点击替换的物体图片的按钮时，目的地按钮和小车按钮失效
+            //При нажатии кнопки замененного изображения объекта кнопка назначения и кнопка автомобиля недействительны.
             Vehicle_Get = false;
             Destination_Get = false;
-            Object_Change = true; //Enable更改物体
+            Object_Change = true; 
             SetImage = img_Destination;
             SetType = false;
-            PicString = "投送处";
+            PicString = "место доставки";
             AGV_Add = false;
         }
 
-        //点击隔道按钮，改变图片和节点可达性
-        private void button6_Click(object sender, EventArgs e)
-        {
-            //当点击替换的物体图片的按钮时，目的地按钮和小车按钮失效
-            Vehicle_Get = false;
-            Destination_Get = false;
-            Object_Change = true; //Enable更改物体
-            SetImage = img_Mid;
-            SetType = true;
-            PicString = "隔道";
-            AGV_Add = false;
-        }
+      
 
-        //点击传送带按钮，改变图片和节点可达性
+        //Нажмите кнопку точки выдачи, чтобы изменить изображение и доступ к узлу.
         private void button7_Click(object sender, EventArgs e)
         {
-            //当点击替换的物体图片的按钮时，目的地按钮和小车按钮失效
+            
             Vehicle_Get = false;
             Destination_Get = false;
-            Object_Change = true;  //Enable更改物体
+            Object_Change = true;  
             SetImage = img_Belt;
             SetType = true;
-            PicString = "传送带";
+            PicString = "место сбора";
             AGV_Add = false;
         }
 
-        //点击充电区按钮，改变图片和节点可达性
+        //Нажмите кнопку зоны зарядки, чтобы изменить изображение и доступность узла.
         private void button9_Click(object sender, EventArgs e)
         {
-            //当点击替换的物体图片的按钮时，目的地按钮和小车按钮失效
+            
             Vehicle_Get = false;
             Destination_Get = false;
-            Object_Change = true;  //Enable更改物体
+            Object_Change = true;  
             SetImage = img_ChargeStation;
             SetType = true;
-            PicString = "充电区";
+            PicString = "зона зарядки";
             AGV_Add = false;
         }
 
-        //点击障碍物按钮，改变图片和节点可达性
+        //Нажмите кнопку препятствия, чтобы изменить изображение и доступ к узлу.
         private void button10_Click(object sender, EventArgs e)
         {
-            //当点击替换的物体图片的按钮时，目的地按钮和小车按钮失效
+            
             Vehicle_Get = false;
             Destination_Get = false;
-            Object_Change = true;  //Enable更改物体
+            Object_Change = true;  
             SetImage = img_Obstacle;
             SetType = false;
-            PicString = "障碍物";
+            PicString = "препятствие";
             AGV_Add = false;
         }
 
-        //点击扫描仪按钮，改变图片和节点可达性
-        private void button11_Click(object sender, EventArgs e)
-        {
-            //当点击替换的物体图片的按钮时，目的地按钮和小车按钮失效
-            Vehicle_Get = false;
-            Destination_Get = false;
-            Object_Change = true;  //Enable更改物体
-            SetImage = img_Scanner;
-            SetType = true;
-            PicString = "扫描仪";
-            AGV_Add = false;
-        }
-        //点击空白按钮，改变图片和节点可达性
+        
+        //Нажмите пустую кнопку, чтобы изменить доступ к изображению и узлу.
         private void button1_Click(object sender, EventArgs e)
         {
-            //当点击替换的物体图片的按钮时，目的地按钮和小车按钮失效
+            
             Vehicle_Get = false;
             Destination_Get = false;
-            Object_Change = true;  //Enable更改物体
+            Object_Change = true;  
             SetImage = img_White;
             SetType = false;
-            PicString = "空白";
+            PicString = "пустой";
             AGV_Add = false;
         }
 
         /// <summary>
-        /// 当鼠标滑过按钮的时候变色功能，下同
+        
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1174,7 +1148,7 @@ namespace AGV_V1._0
 
 
         /// <summary>
-        /// 当鼠标从按钮离开时按钮变色，下同
+       
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1204,16 +1178,16 @@ namespace AGV_V1._0
         }
 
         /// <summary>
-        /// 显示小车行驶路径按钮
+        /// Показать кнопку пути движения автомобиля
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void ShowVehicleRouteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //更改图标
+            
             F_VehicleRoute.Icon = ((System.Drawing.Icon)(Resources.youzheng));
 
-            //设置框体和文本框的大小
+           
             F_VehicleRoute.Size = new System.Drawing.Size(500, 500);
             L_VehicleRoute.Size = new System.Drawing.Size(480, 480);
 
@@ -1224,7 +1198,7 @@ namespace AGV_V1._0
 
             for (int i = 0; i < constDefine.VEHICL_COUNT; i++)
             {
-                sb1[i] = new StringBuilder("第"+(i+1)+"辆车的路径：");
+                sb1[i] = new StringBuilder("Путь автомобиля "+(i+1)+":");
             }
 
 
@@ -1246,32 +1220,32 @@ namespace AGV_V1._0
             }
             L_VehicleRoute.Text = Together.ToString();
 
-            //将Label加入到框体中
+          
             F_VehicleRoute.Controls.Add(L_VehicleRoute);
 
             F_VehicleRoute.ShowDialog();    
         }
 
         /// <summary>
-        /// 设置长宽，包括框体长宽和地图长宽
+       
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void setHWToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //框体的图标
+            
             F_HegWethBech.Icon = ((System.Drawing.Icon)(Resources.youzheng));
 
-            F_HegWethBech.Size = new System.Drawing.Size(350,350);  //设置弹出的框体的尺寸
+            F_HegWethBech.Size = new System.Drawing.Size(350,350); 
 
-            ///////////////////////////最上边的panel////////////////////////////
-            P_TopPanel.Location = new System.Drawing.Point(10,10);    //设置最上边panel的位置
-            this.P_TopPanel.Size = new System.Drawing.Size(340, 30); //设置最上边panel的尺寸
+            ///////////////////////////вершина////////////////////////////
+            P_TopPanel.Location = new System.Drawing.Point(10,10);    
+            this.P_TopPanel.Size = new System.Drawing.Size(340, 30); 
             B_HWForm.Location = new System.Drawing.Point(0,0);
             B_HWForm.BackColor = System.Drawing.Color.Chartreuse;
-            B_HWForm.Text = "框体长宽";
+            B_HWForm.Text = "Длина и ширина рамы";
             B_HWMap.Location = new System.Drawing.Point(80,0);
-            B_HWMap.Text = "地图长宽";
+            B_HWMap.Text = "Длина и ширина карты";
             B_HWMap.BackColor = System.Drawing.Color.PowderBlue;
 
             B_HWForm.Click += new System.EventHandler(this.B_HWForm_Click);
@@ -1280,15 +1254,15 @@ namespace AGV_V1._0
             P_TopPanel.Controls.Add(B_HWForm);
             P_TopPanel.Controls.Add(B_HWMap);
 
-            ///////////////////////////最下边的panel////////////////////////////
+            ///////////////////////////дно///////////////////////////
             P_BottomPanel.Location = new System.Drawing.Point(0,210);
             P_BottomPanel.Size = new System.Drawing.Size(350,140);
 
             B_OKBotton.Location = new System.Drawing.Point(75,10);
             B_CANCELBotton.Location = new System.Drawing.Point(175, 10);
 
-            B_OKBotton.Text = "确认";
-            B_CANCELBotton.Text = "取消";
+            B_OKBotton.Text = "подтверждать";
+            B_CANCELBotton.Text = "Отмена";
 
             //B_OKBotton.Click += new System.EventHandler(this.B_OKBotton_Click);
             B_CANCELBotton.Click += new System.EventHandler(this.B_CANCELBotton_Click);
@@ -1296,23 +1270,23 @@ namespace AGV_V1._0
             P_BottomPanel.Controls.Add(B_OKBotton);
             P_BottomPanel.Controls.Add(B_CANCELBotton);
 
-            ///////////////////////////Form长宽的panel///////////////////////////
+            //////////////////////////////////////////////////////
             P_HWForm.Location = new System.Drawing.Point(0,40);
             P_HWForm.Size = new System.Drawing.Size(350,170);
 
-            //标签的名字
-            L_HegForm.Text = "框体长度";
-            L_WethForm.Text = "框体宽度";
-            L_Bech.Text = "基准";
+            
+            L_HegForm.Text = "длина кадра";
+            L_WethForm.Text = "ширина рамы";
+            L_Bech.Text = "ориентир";
 
-            //标签的位置
+            //позиция метки
             this.L_HegForm.Location = new System.Drawing.Point(60, 65);
             this.L_WethForm.Location = new System.Drawing.Point(60, 105);
             this.L_Bech.Location = new System.Drawing.Point(60, 125);
 
 
 
-            //输入框的位置、长宽
+            //Положение, длина и ширина поля ввода
             T_HegForm.SetBounds(160, 60, 90, 60);
             T_WethForm.SetBounds(160, 100, 90, 60);
             T_Bech.SetBounds(120, 120, 90, 60);
@@ -1322,19 +1296,19 @@ namespace AGV_V1._0
             P_HWForm.Controls.Add(L_HegForm);
             P_HWForm.Controls.Add(L_WethForm);
 
-//////////////////////////////////////////////Map长宽的panel///////////////////////////////////////////
+//////////////////////////////////////////////Длина и ширина карты///////////////////////////////////////////
             P_HWMap.Location = new System.Drawing.Point(0,40);
             P_HWMap.Size = new System.Drawing.Size(350,170);
 
-            L_HegMap.Text = "地图长度";
-            L_WethMap.Text = "地图宽度";
+            L_HegMap.Text = "длина карты";
+            L_WethMap.Text = "ширина карты";
 
  
-            //标签的位置
+            
             this.L_HegMap.Location = new System.Drawing.Point(60, 65);
             this.L_WethMap.Location = new System.Drawing.Point(60, 105);
            
-            //输入框的位置、长宽
+           
             T_HegMap.SetBounds(160, 60, 90, 60);
             T_WethMap.SetBounds(160, 100, 90, 60);
             T_Bech.SetBounds(120, 120, 90, 60);
@@ -1353,7 +1327,7 @@ namespace AGV_V1._0
         }
 
         /// <summary>
-        /// 设置->设置长宽->框体长宽
+       
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1366,7 +1340,7 @@ namespace AGV_V1._0
         }
 
         /// <summary>
-        /// 设置->设置长宽->地图长宽
+       
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1379,7 +1353,7 @@ namespace AGV_V1._0
         }
 
         /// <summary>
-        /// 设置->设置长宽->确认按钮
+      
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1389,11 +1363,11 @@ namespace AGV_V1._0
             string path = "../../XMLFile1.xml";
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.Load(path);
-            XmlNode root = xmlDoc.SelectSingleNode("config");//查找要修改的节点
+            XmlNode root = xmlDoc.SelectSingleNode("config");//Найдите узел для изменения
 
-///////////////////////////////////////框体///////////////////////////////////////////
+///////////////////////////////////////фреймворк///////////////////////////////////////////
 
-            //将输入框中的字符串转化成数字，然后赋值给长度、宽度和基准
+            
             int Out_HeighFormt;
             int Out_WidthForm;
             int Out_Bech;
@@ -1402,7 +1376,7 @@ namespace AGV_V1._0
             int.TryParse(T_HegForm.Text, out Out_WidthForm);
             int.TryParse(T_HegForm.Text, out Out_Bech);
 
-            //如果长度或者宽度或者基准的输入为空，就对其不做任何操作
+           
             if (String.IsNullOrEmpty(T_HegForm.Text))
             {
             }
@@ -1410,7 +1384,7 @@ namespace AGV_V1._0
             {
                 this.Height = Out_HeighFormt;
 
-                //将用户在text里面设置的框体的长度值传到XML配置文件里面
+                
                 string s = Convert.ToString(this.Height);
                 XmlNode xn = root.SelectSingleNode("Form_Height");
                 XmlElement xe = (XmlElement)xn;
@@ -1423,7 +1397,7 @@ namespace AGV_V1._0
             }
             else
             {
-                //将用户在text里面设置的框体的宽度值传到XML配置文件里面
+                
                 this.Width = Out_WidthForm;
                 string s = Convert.ToString(this.Width);
                 XmlNode xn = root.SelectSingleNode("Form_Width");
@@ -1439,9 +1413,9 @@ namespace AGV_V1._0
             else
                 constDefine.BENCHMARK = Out_Bech;
 
-////////////////////////////////////////地图////////////////////////////////////////////////
+////////////////////////////////////////карта////////////////////////////////////////////////
 
-            //将输入框中的字符串转化成数字，然后赋值给长度、宽度和基准
+            //Преобразуйте строку в поле ввода в число, а затем присвойте ей длину, ширину и основание.
             int Out_HeightMap;
             int Out_WeithMap;
 
@@ -1449,7 +1423,7 @@ namespace AGV_V1._0
             int.TryParse(T_WethMap.Text, out Out_WeithMap);
             int.TryParse(T_Bech.Text, out Out_Bech);
 
-            //如果长度或者宽度或者基准的输入为空，就对其不做任何操作
+            //Если ввод длины, ширины или базы данных пуст, ничего с ним не делайте.
             if (String.IsNullOrEmpty(T_HegMap.Text))
             {
             }
@@ -1457,7 +1431,7 @@ namespace AGV_V1._0
             {
                 this.Height = Out_HeightMap;
 
-                //将用户在text里面设置的框体的长度值传到XML配置文件里面
+                //Передайте значение длины поля, установленное пользователем в тексте, в файл конфигурации XML.
                 string s = Convert.ToString(this.Height);
                 XmlNode xn = root.SelectSingleNode("HEIGHT");
                 XmlElement xe = (XmlElement)xn;
@@ -1470,7 +1444,7 @@ namespace AGV_V1._0
             }
             else
             {
-                //将用户在text里面设置的框体的宽度值传到XML配置文件里面
+               
                 this.Width = Out_WeithMap;
                 string s = Convert.ToString(this.Width);
                 XmlNode xn = root.SelectSingleNode("WIDTH");
@@ -1479,13 +1453,13 @@ namespace AGV_V1._0
                 xmlDoc.Save(path);
             }
 
-            //所有的操作完成后，清除输入框内的信息
+            
             //T_HegMap.Clear();
             //T_WethMap.Clear();
             //T_HegForm.Clear();
             //T_WethForm.Clear();
 
-            //关闭框体
+            
             F_HegWethBech.Dispose();
 
             this.Dispose();
@@ -1495,18 +1469,18 @@ namespace AGV_V1._0
         }
 
         /// <summary>
-        /// 设置->设置长宽->取消按钮
+       
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void B_CANCELBotton_Click(object sender, EventArgs e)
         {
-            //所有的操作完成后，清除输入框内的信息
+            
             T_HegMap.Clear();
             T_WethMap.Clear();
             T_HegForm.Clear();
             T_WethForm.Clear();
-            //关闭框体
+            
             F_HegWethBech.Close();
         }
 
@@ -1522,21 +1496,21 @@ namespace AGV_V1._0
         {
 
         }
-        //private GMapOverlay objects = new GMapOverlay("objects"); //放置marker的图层    
+        //private GMapOverlay objects = new GMapOverlay("objects");   
 
         //private void gMapControl1_Load_1(object sender, EventArgs e)
         //{
         //    gMapControl1.Manager.Mode = AccessMode.CacheOnly;
         //    MessageBox.Show("No internet connection avaible, going to CacheOnly mode.", "GMap.NET Demo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-        //    gMapControl1.CacheLocation = Environment.CurrentDirectory + "\\GMapCache\\"; //缓存位置
-        //    gMapControl1.MapProvider = GMapProviders.GoogleChinaMap; //google china 地图
-        //    gMapControl1.MinZoom = 2;  //最小比例
-        //    gMapControl1.MaxZoom = 17; //最大比例
-        //    gMapControl1.Zoom = 5;     //当前比例
-        //    gMapControl1.ShowCenter = false; //不显示中心十字点
-        //    gMapControl1.DragButton = System.Windows.Forms.MouseButtons.Left; //左键拖拽地图
-        //    gMapControl1.Position = new PointLatLng(32.064, 118.704); //地图中心位置：南京
+        //    gMapControl1.CacheLocation = Environment.CurrentDirectory + "\\GMapCache\\"; 
+        //    gMapControl1.MapProvider = GMapProviders.GoogleChinaMap; 
+        //    gMapControl1.MinZoom = 2;  
+        //    gMapControl1.MaxZoom = 17; 
+        //    gMapControl1.Zoom = 5;     
+        //    gMapControl1.ShowCenter = false; 
+        //    gMapControl1.DragButton = System.Windows.Forms.MouseButtons.Left; 
+        //    gMapControl1.Position = new PointLatLng(32.064, 118.704); 
 
         //    gMapControl1.Overlays.Add(objects);
 
