@@ -1,4 +1,4 @@
-#define _model_h
+#define _model
 #include "ross.h"
 using System;
 using System.Collections.Generic;
